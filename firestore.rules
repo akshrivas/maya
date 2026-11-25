@@ -1,0 +1,85 @@
+rules_version = '2';
+
+// Maya — Firestore security rules
+// • Public pages (profiles) can be read by anyone once published, but only the owner can edit.
+// • Private data (users) can only be read/edited by the owner.
+// • Creating a page, changing the page link and deleting an account happen on the
+//   server (Admin SDK), which checks the logged-in user itself — so clients can't do them here.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+    function str(v, min, max) { return v is string && v.size() >= min && v.size() <= max; }
+    function e164OrEmpty(v) { return v is string && (v == '' || v.matches('^\\+[0-9]{7,15}$')); }
+    function imageOrNull(v, uid) {
+      return v == null || (v is map && v.keys().hasOnly(['url', 'path'])
+        && str(v.url, 1, 1000) && str(v.path, 1, 300) && v.path.matches('^users/' + uid + '/.*'));
+    }
+
+    function validProfile(d, uid) {
+      return d.template in ['classic', 'friendly', 'gallery', 'bold']
+        && str(d.name, 2, 80)
+        && str(d.professionId, 1, 60)
+        && str(d.state, 1, 80) && str(d.city, 1, 80) && str(d.area, 0, 80) && str(d.pincode, 0, 10)
+        && str(d.intro, 1, 160)
+        && str(d.about, 0, 2000)
+        && imageOrNull(d.photo, uid) && imageOrNull(d.cover, uid)
+        && (d.yearsExperience == null || (d.yearsExperience is int && d.yearsExperience >= 0 && d.yearsExperience <= 80))
+        && d.services is list && d.services.size() <= 20
+        && d.portfolio is list && d.portfolio.size() <= 12
+        && d.videos is list && d.videos.size() <= 6
+        && d.languages is list && d.languages.size() <= 10
+        && d.contact is map
+        && d.contact.keys().hasOnly(['phone', 'whatsapp', 'email', 'website', 'instagram'])
+        && e164OrEmpty(d.contact.phone) && d.contact.phone != ''
+        && e164OrEmpty(d.contact.whatsapp)
+        && str(d.contact.email, 0, 300) && str(d.contact.website, 0, 300) && str(d.contact.instagram, 0, 30)
+        && str(d.workingHours, 0, 120)
+        && str(d.serviceArea, 0, 160)
+        && d.extra is map && d.extra.size() <= 10
+        && d.updatedAt is int;
+    }
+
+    // Public profile pages
+    match /profiles/{uid} {
+      allow get: if isOwner(uid) || resource.data.published == true;
+      allow list: if resource.data.published == true;
+      allow create, delete: if false; // server only
+      allow update: if isOwner(uid)
+        && onlyChanges(['template', 'name', 'professionId', 'state', 'city', 'area', 'pincode',
+                        'intro', 'about', 'photo', 'cover', 'yearsExperience', 'services',
+                        'portfolio', 'videos', 'languages', 'contact', 'workingHours',
+                        'serviceArea', 'extra', 'updatedAt'])
+        && validProfile(request.resource.data, uid);
+    }
+
+    // Private account data (sign-in details, consent, verification documents)
+    match /users/{uid} {
+      allow get: if isOwner(uid);
+      allow list, create, delete: if false; // server only
+      allow update: if isOwner(uid)
+        && onlyChanges(['lang', 'verification'])
+        && (!('lang' in request.resource.data) || request.resource.data.lang in ['en', 'hi'])
+        && (request.resource.data.verification == null
+            || (request.resource.data.verification is map
+                && request.resource.data.verification.status == 'submitted'
+                && request.resource.data.verification.keys().hasOnly(
+                     ['pan', 'businessIdType', 'businessId', 'licenceName', 'licenceNumber', 'status', 'submittedAt'])));
+    }
+
+    // Page link -> owner. Anyone can check if a link is taken; only the server assigns them.
+    match /handles/{handle} {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
