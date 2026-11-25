@@ -75,7 +75,7 @@ The step-by-step guide for creating the Firebase project, the Claude key, Vercel
 **[docs/SETUP.md](docs/SETUP.md)**. In short:
 
 1. Create the Firebase project, turn on Phone + Google sign-in, Firestore and Storage.
-2. Publish the security rules: `npx firebase login` then `npx firebase deploy --only firestore:rules,storage --project <your-project-id>`
+2. Publish the security rules: `npx firebase login` then `npx firebase deploy --only firestore:rules,storage`
 3. Import this GitHub repo in Vercel, paste the environment variables, deploy.
 4. Add your domain in Vercel, and add it to Firebase → Authentication → Settings → Authorized domains.
 

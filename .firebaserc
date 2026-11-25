@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "demo-maya"
+    "default": "maya-372e5",
+    "local": "demo-maya"
   }
 }
