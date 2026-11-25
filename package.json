@@ -1,0 +1,41 @@
+{
+  "name": "maya",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-maya \"vitest run --config vitest.rules.config.ts\"",
+    "emulators": "firebase emulators:start --project demo-maya"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.5.1",
+    "next": "15.5.29",
+    "qrcode": "^1.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22.20.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.29",
+    "firebase-tools": "^15.37.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  }
+}

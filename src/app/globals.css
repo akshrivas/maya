@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Maya brand colours. Templates for public pages define their own. */
+@theme {
+  --color-brand-50: #eef6f4;
+  --color-brand-100: #d5ebe5;
+  --color-brand-500: #138a72;
+  --color-brand-600: #0f735f;
+  --color-brand-700: #0c5c4c;
+  --color-brand-900: #07362d;
+  --color-accent-400: #f8b84e;
+  --color-accent-500: #f29f1a;
+  --color-ink: #16211e;
+  --color-muted: #5b6a66;
+  --color-line: #e3e8e6;
+  --color-paper: #fbfaf7;
+  --color-whatsapp: #1fa855;
+
+  /* System fonts load instantly on slow mobile data and include Devanagari. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+    "Noto Sans Devanagari", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, "Noto Serif", "Noto Serif Devanagari", serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Shared building blocks used across the app */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-base font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-700;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-white text-ink hover:bg-brand-50;
+}
+@utility input {
+  @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink outline-none placeholder:text-muted/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium text-ink;
+}
+@utility card {
+  @apply rounded-2xl border border-line bg-white p-5;
+}
