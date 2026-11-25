@@ -43,6 +43,7 @@ export function sampleProfile(uid: string, overrides: Partial<Profile> = {}): Pr
     workingHours: "",
     serviceArea: "",
     extra: {},
+    testimonials: [],
     createdAt: now,
     updatedAt: now,
     publishedAt: now,

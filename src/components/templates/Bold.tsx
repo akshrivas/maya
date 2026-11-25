@@ -5,7 +5,7 @@ import { placeLine } from "@/components/page/helpers";
 import { PinIcon } from "@/components/page/icons";
 import {
   AboutSection, ActionButtons, Avatar, ContactSection, DetailsSection, MayaFooter, PageShareButton,
-  ServicesSection, StickyContactBar, VerifiedBadge, VideosSection, WorkSection, type Theme,
+  ServicesSection, StickyContactBar, ReviewsSection, SectionNav, VerifiedBadge, VideosSection, WorkSection, type Theme,
 } from "@/components/page/sections";
 
 const theme: Theme = {
@@ -20,6 +20,9 @@ const theme: Theme = {
   shareBtn: "border-[3px] border-black bg-white text-black",
   avatar: "rounded-xl border-[3px] border-black bg-white text-black",
   footer: "text-black",
+  card: "border-2 border-black bg-[#fff3b0]",
+  nav: "border-b-[3px] border-black bg-white",
+  navLink: "uppercase tracking-tight text-black hover:bg-[#ffd400]",
 };
 
 export function BoldTemplate({ ctx }: { ctx: PageCtx }) {
@@ -47,12 +50,14 @@ export function BoldTemplate({ ctx }: { ctx: PageCtx }) {
           <PageShareButton ctx={ctx} theme={theme} className="mt-2 w-full" />
         </div>
       </header>
+      <SectionNav ctx={ctx} theme={theme} order={["services", "about", "work", "videos", "reviews", "details", "contact"]} />
 
       <main className="mx-auto mt-8 grid max-w-2xl gap-6 px-5">
         <ServicesSection ctx={ctx} theme={theme} />
         <AboutSection ctx={ctx} theme={theme} />
         <WorkSection ctx={ctx} theme={theme} />
         <VideosSection ctx={ctx} theme={theme} />
+        <ReviewsSection ctx={ctx} theme={theme} />
         <DetailsSection ctx={ctx} theme={theme} />
         <ContactSection ctx={ctx} theme={theme} />
       </main>

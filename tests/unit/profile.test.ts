@@ -71,6 +71,20 @@ describe("dashboard save (draft -> saved profile)", () => {
     expect(r.ok && r.data.services).toEqual([{ name: "Home tuition", priceMin: 2000, priceMax: 4000 }]);
     expect(r.ok && r.data.contact.instagram).toBe("asha.tutor");
   });
+  it("keeps reviews, drops empty review rows, flags half-filled ones", () => {
+    const p = sampleProfile("u");
+    const d = toDraft(p);
+    d.testimonials = [
+      { name: "Neha S.", text: "Best tutor for my son!", detail: "Parent" },
+      { name: "", text: "", detail: "" },
+    ];
+    const r = fromDraft(d, p);
+    expect(r.ok && r.data.testimonials).toEqual([{ name: "Neha S.", text: "Best tutor for my son!", detail: "Parent" }]);
+    d.testimonials = [{ name: "Ravi", text: "", detail: "" }];
+    const bad = fromDraft(d, p);
+    expect(!bad.ok && bad.errors["testimonials.0.text"]).toBe("required");
+  });
+
   it("reports friendly errors", () => {
     const p = sampleProfile("u");
     const d = { ...toDraft(p), email: "nope", phone: "12", services: [{ name: "X", priceMin: "500", priceMax: "100" }] };

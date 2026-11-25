@@ -2,7 +2,7 @@
 // numbers as text the user types). On save it's converted back and validated.
 import { COUNTRIES, toE164 } from "@/config/countries";
 import { profileEditSchema, fieldErrors } from "@/lib/profile/schema";
-import type { Profile, StoredImage } from "@/lib/profile/types";
+import type { Profile, StoredImage, Testimonial } from "@/lib/profile/types";
 import type { TemplateId } from "@/config/templates";
 
 export type DraftService = { name: string; priceMin: string; priceMax: string };
@@ -32,6 +32,7 @@ export type Draft = {
   workingHours: string;
   serviceArea: string;
   extra: Record<string, string>;
+  testimonials: Testimonial[];
 };
 
 function national(e164: string, dial: string) {
@@ -69,6 +70,7 @@ export function toDraft(p: Profile): Draft {
     workingHours: p.workingHours,
     serviceArea: p.serviceArea,
     extra: p.extra,
+    testimonials: p.testimonials ?? [],
   };
 }
 
@@ -110,6 +112,8 @@ export function fromDraft(d: Draft, p: Profile) {
     workingHours: d.workingHours,
     serviceArea: d.serviceArea,
     extra: Object.fromEntries(Object.entries(d.extra).filter(([, v]) => v.trim())),
+    // Drop rows left completely empty; half-filled rows are reported as errors.
+    testimonials: d.testimonials.filter((r) => r.name.trim() || r.text.trim() || r.detail.trim()),
   };
 
   const parsed = profileEditSchema.safeParse(candidate);

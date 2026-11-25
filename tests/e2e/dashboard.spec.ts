@@ -46,6 +46,31 @@ test("profile save: edit details on the dashboard and see them on the public pag
   await expect(page.getByText("8+ years")).toBeVisible();
 });
 
+test("reviews and the section menu make the page feel like a website", async ({ page }) => {
+  const handle = await signUp(page);
+  await open(page, /^About you/);
+  await page.locator("#about").fill("I have taught maths and science for eight years with small batches and weekly tests.");
+  await open(page, /^Client reviews/);
+  await page.getByRole("button", { name: /add a review/i }).click();
+  await page.getByLabel(/client's name/i).fill("Neha S.");
+  await page.getByLabel(/what they said/i).fill("My son's maths marks went from 55 to 88 in one term!");
+  await page.getByLabel(/^detail/i).fill("Parent, Class 9");
+  await page.getByRole("button", { name: /save changes/i }).click();
+  await expect(page.getByText(/saved\. your page is updated/i)).toBeVisible();
+
+  await page.goto(`/${handle}`);
+  await expect(page.getByText("My son's maths marks went from 55 to 88")).toBeVisible();
+  await expect(page.getByText("— Neha S.")).toBeVisible();
+  const nav = page.getByRole("navigation", { name: /page sections/i });
+  await expect(nav.getByRole("link")).toHaveText(["About", "Client reviews", "Details", "Contact"]);
+  await nav.getByRole("link", { name: "Client reviews" }).click();
+  await expect(page).toHaveURL(/#reviews$/);
+  await expect(page.getByRole("link", { name: /view on google maps/i })).toHaveAttribute(
+    "href",
+    /google\.com\/maps\/search\/\?api=1&query=Indore/,
+  );
+});
+
 test("invalid input is caught before saving", async ({ page }) => {
   await signUp(page);
   await open(page, /^Contact & links/);

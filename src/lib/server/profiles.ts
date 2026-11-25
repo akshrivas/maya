@@ -60,6 +60,7 @@ export async function createProfile(
       workingHours: "",
       serviceArea: "",
       extra: {},
+      testimonials: [],
       createdAt: now,
       updatedAt: now,
       publishedAt: now,

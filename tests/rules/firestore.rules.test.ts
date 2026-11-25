@@ -67,6 +67,21 @@ describe("owner editing their own page", () => {
     );
   });
 
+  it("the owner can add up to 6 reviews, not more; older pages without reviews can still be edited", async () => {
+    const db = env.authenticatedContext(OWNER).firestore();
+    const ref = doc(db, "profiles", OWNER);
+    const review = { name: "Neha", text: "Great teacher", detail: "" };
+    await assertSucceeds(updateDoc(ref, { testimonials: [review, review], updatedAt: Date.now() }));
+    await assertFails(updateDoc(ref, { testimonials: Array(7).fill(review), updatedAt: Date.now() }));
+    // a page created before reviews existed (no "testimonials" field)
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const { testimonials: _omit, ...old } = sampleProfile(OWNER);
+      void _omit;
+      await setDoc(doc(ctx.firestore(), "profiles", OWNER), old);
+    });
+    await assertSucceeds(updateDoc(ref, { name: "Asha V.", updatedAt: Date.now() }));
+  });
+
   it("the owner cannot change protected fields (link, badge, published, owner)", async () => {
     const db = env.authenticatedContext(OWNER).firestore();
     const ref = doc(db, "profiles", OWNER);

@@ -10,6 +10,13 @@ export type Service = {
   priceMax: number | null;
 };
 
+/** A client testimonial the professional adds to their page. */
+export type Testimonial = {
+  name: string; // client's name, e.g. "Neha S."
+  text: string; // what they said
+  detail: string; // optional context, e.g. "Bride, Dec 2025" or "Parent of a Class 8 student"
+};
+
 /** Contact channels. Add new messaging apps here without changing the database. */
 export type Contact = {
   phone: string; // E.164, e.g. +919876543210 — used for the Call button
@@ -51,6 +58,7 @@ export type Profile = {
   workingHours: string;
   serviceArea: string;
   extra: Record<string, string>; // profession-specific fields
+  testimonials?: Testimonial[]; // optional: pages created before this field existed don't have it
 
   createdAt: number; // ms since epoch
   updatedAt: number;
@@ -101,6 +109,7 @@ export const EDITABLE_PROFILE_FIELDS = [
   "workingHours",
   "serviceArea",
   "extra",
+  "testimonials",
   "updatedAt",
 ] as const;
 

@@ -18,6 +18,10 @@ export const LIMITS = {
   workingHours: 120,
   serviceArea: 160,
   extraValue: 160,
+  testimonials: 6,
+  testimonialName: 60,
+  testimonialText: 300,
+  testimonialDetail: 60,
   url: 300,
 };
 
@@ -107,6 +111,15 @@ export const profileEditSchema = z.object({
   workingHours: text(LIMITS.workingHours),
   serviceArea: text(LIMITS.serviceArea),
   extra: z.record(z.string().regex(/^[a-zA-Z]{1,40}$/), text(LIMITS.extraValue)),
+  testimonials: z
+    .array(
+      z.object({
+        name: requiredText(LIMITS.testimonialName),
+        text: requiredText(LIMITS.testimonialText),
+        detail: text(LIMITS.testimonialDetail),
+      }),
+    )
+    .max(LIMITS.testimonials),
 });
 
 export type ProfileEdit = z.output<typeof profileEditSchema>;

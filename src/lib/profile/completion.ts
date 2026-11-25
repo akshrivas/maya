@@ -18,6 +18,7 @@ const CHECKS: Check[] = [
   { key: "languages", weight: 4, done: (p) => p.languages.length > 0 },
   { key: "hours", weight: 3, done: (p) => !!p.workingHours.trim() },
   { key: "serviceArea", weight: 3, done: (p) => !!p.serviceArea.trim() },
+  { key: "reviews", weight: 0, done: (p) => (p.testimonials ?? []).length > 0 },
   {
     key: "links",
     weight: 0, // shown as a suggestion but not weighted

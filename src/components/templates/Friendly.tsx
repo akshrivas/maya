@@ -5,7 +5,7 @@ import { placeLine } from "@/components/page/helpers";
 import { PinIcon } from "@/components/page/icons";
 import {
   AboutSection, ActionButtons, Avatar, ContactSection, DetailsSection, MayaFooter, PageShareButton,
-  ServicesSection, StickyContactBar, VerifiedBadge, VideosSection, WorkSection, type Theme,
+  ServicesSection, StickyContactBar, ReviewsSection, SectionNav, VerifiedBadge, VideosSection, WorkSection, type Theme,
 } from "@/components/page/sections";
 
 const theme: Theme = {
@@ -20,6 +20,9 @@ const theme: Theme = {
   shareBtn: "bg-[#fdebd9] text-[#8a4b1d] hover:bg-[#fbdfc4]",
   avatar: "rounded-full border-[5px] border-white bg-[#ffcf9e] text-[#8a4b1d] shadow-lg",
   footer: "text-[#2d5d62]",
+  card: "bg-[#fff8f0]",
+  nav: "bg-[#fff8f0]/95 backdrop-blur",
+  navLink: "rounded-full bg-white text-[#2d5d62] shadow-sm hover:bg-[#dff1ef]",
 };
 
 export function FriendlyTemplate({ ctx }: { ctx: PageCtx }) {
@@ -49,12 +52,14 @@ export function FriendlyTemplate({ ctx }: { ctx: PageCtx }) {
           <PageShareButton ctx={ctx} theme={theme} className="mt-2 w-full" />
         </div>
       </header>
+      <SectionNav ctx={ctx} theme={theme} order={["about", "services", "work", "videos", "reviews", "details", "contact"]} />
 
       <main className="mx-auto mt-8 grid max-w-xl gap-4 px-4">
         <AboutSection ctx={ctx} theme={theme} />
         <ServicesSection ctx={ctx} theme={theme} />
         <WorkSection ctx={ctx} theme={theme} />
         <VideosSection ctx={ctx} theme={theme} />
+        <ReviewsSection ctx={ctx} theme={theme} />
         <DetailsSection ctx={ctx} theme={theme} />
         <ContactSection ctx={ctx} theme={theme} />
       </main>

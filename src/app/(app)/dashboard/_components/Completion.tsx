@@ -17,6 +17,7 @@ const TARGET: Record<string, string> = {
   hours: "sec-more",
   serviceArea: "sec-more",
   links: "sec-contact",
+  reviews: "sec-reviews",
 };
 
 export function CompletionBar({ profile, onOpen }: { profile: Profile; onOpen: (sectionId: string) => void }) {

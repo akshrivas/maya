@@ -41,6 +41,10 @@ const demos = [
     ],
     contact: { phone: "+919123456780", whatsapp: "", email: "", website: "", instagram: "asha.tutor" },
     workingHours: "Mon–Sat, 4 pm – 8 pm", serviceArea: "Vijay Nagar, Scheme 54, Bombay Hospital area",
+    testimonials: [
+      { name: "Neha S.", text: "My son's maths marks went from 55 to 88 in one term. Asha ma'am explains every step patiently.", detail: "Parent, Class 9" },
+      { name: "Rohit K.", text: "Weekly tests really helped me before boards.", detail: "Class 10 student" },
+    ],
     extra: { subjects: "Maths, Science", classes: "Class 6–10, CBSE & MP Board", mode: "Home tuition and centre" },
   },
   {
@@ -56,6 +60,9 @@ const demos = [
     videos: ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
     contact: { phone: "+919988776655", whatsapp: "", email: "", website: "", instagram: "priya.mua" },
     workingHours: "By appointment", serviceArea: "Indore, Ujjain, Dewas — travel for weddings",
+    testimonials: [
+      { name: "Kritika J.", text: "Priya made me look like myself, only better. The makeup lasted the whole wedding night!", detail: "Bride, Feb 2026" },
+    ],
     extra: { specialities: "Bridal, HD, airbrush", studioName: "Glow by Priya" },
   },
   {

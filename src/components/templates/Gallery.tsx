@@ -4,7 +4,7 @@ import type { PageCtx } from "@/components/page/helpers";
 import { placeLine } from "@/components/page/helpers";
 import {
   AboutSection, ActionButtons, Avatar, ContactSection, DetailsSection, MayaFooter, PageShareButton,
-  PortfolioGrid, Section, ServicesSection, StickyContactBar, VerifiedBadge, VideosSection, type Theme,
+  PortfolioGrid, Section, ServicesSection, StickyContactBar, ReviewsSection, SectionNav, VerifiedBadge, VideosSection, type Theme,
 } from "@/components/page/sections";
 
 const theme: Theme = {
@@ -19,6 +19,9 @@ const theme: Theme = {
   shareBtn: "border border-white/25 text-white hover:bg-white/10",
   avatar: "rounded-full border-2 border-[#e9a3b5] bg-[#2a2a2a] text-[#e9a3b5]",
   footer: "text-white/80",
+  card: "bg-white/5",
+  nav: "border-y border-white/10 bg-[#121212]/95 backdrop-blur",
+  navLink: "rounded-full text-white/80 hover:bg-white/10 hover:text-white",
 };
 
 export function GalleryTemplate({ ctx }: { ctx: PageCtx }) {
@@ -49,6 +52,7 @@ export function GalleryTemplate({ ctx }: { ctx: PageCtx }) {
           <PageShareButton ctx={ctx} theme={theme} className="mt-2 w-full" />
         </div>
       </header>
+      <SectionNav ctx={ctx} theme={theme} order={["work", "videos", "about", "services", "reviews", "details", "contact"]} />
 
       <main className="mx-auto mt-8 max-w-2xl px-5">
         {profile.portfolio.length > 0 && (
@@ -59,6 +63,7 @@ export function GalleryTemplate({ ctx }: { ctx: PageCtx }) {
         <VideosSection ctx={ctx} theme={theme} />
         <AboutSection ctx={ctx} theme={theme} />
         <ServicesSection ctx={ctx} theme={theme} />
+        <ReviewsSection ctx={ctx} theme={theme} />
         <DetailsSection ctx={ctx} theme={theme} />
         <ContactSection ctx={ctx} theme={theme} />
       </main>

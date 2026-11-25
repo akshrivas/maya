@@ -5,7 +5,7 @@ import { placeLine } from "@/components/page/helpers";
 import { PinIcon } from "@/components/page/icons";
 import {
   AboutSection, ActionButtons, Avatar, ContactSection, DetailsSection, MayaFooter, PageShareButton,
-  ServicesSection, StickyContactBar, VerifiedBadge, VideosSection, WorkSection, type Theme,
+  ServicesSection, StickyContactBar, ReviewsSection, SectionNav, VerifiedBadge, VideosSection, WorkSection, type Theme,
 } from "@/components/page/sections";
 
 const theme: Theme = {
@@ -20,6 +20,9 @@ const theme: Theme = {
   shareBtn: "border border-[#d9d5ca] bg-white text-[#1c2b4a] hover:bg-[#f6f4ee]",
   avatar: "rounded-2xl border-4 border-white bg-[#c9a961] text-[#1c2b4a] shadow-md",
   footer: "text-[#1c2b4a]",
+  card: "bg-white border border-[#ebe7dc]",
+  nav: "border-y border-[#e4e1d8] bg-[#faf8f3]/95 backdrop-blur",
+  navLink: "rounded-full text-[#1c2b4a] hover:bg-[#1c2b4a]/5",
 };
 
 export function ClassicTemplate({ ctx }: { ctx: PageCtx }) {
@@ -51,12 +54,14 @@ export function ClassicTemplate({ ctx }: { ctx: PageCtx }) {
           <PageShareButton ctx={ctx} theme={theme} className="mt-2 w-full" />
         </div>
       </header>
+      <SectionNav ctx={ctx} theme={theme} order={["about", "services", "work", "videos", "reviews", "details", "contact"]} />
 
       <main className="mx-auto mt-8 max-w-2xl px-5">
         <AboutSection ctx={ctx} theme={theme} />
         <ServicesSection ctx={ctx} theme={theme} />
         <WorkSection ctx={ctx} theme={theme} />
         <VideosSection ctx={ctx} theme={theme} />
+        <ReviewsSection ctx={ctx} theme={theme} />
         <DetailsSection ctx={ctx} theme={theme} />
         <ContactSection ctx={ctx} theme={theme} />
       </main>

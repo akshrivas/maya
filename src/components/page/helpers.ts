@@ -31,6 +31,12 @@ export function priceText(s: Service, p: Profile, t: Dict): string {
   return t.page.priceOnRequest;
 }
 
+/** Google Maps search for the professional's area — no API key needed. */
+export function mapsHref(p: Profile): string {
+  const q = [p.area, p.city, p.state, p.pincode, COUNTRIES[p.country]?.name].filter(Boolean).join(", ");
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+}
+
 export function placeLine(p: Profile): string {
   return [p.area, p.city].filter(Boolean).join(", ");
 }

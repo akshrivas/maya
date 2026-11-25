@@ -41,6 +41,8 @@ service cloud.firestore {
         && str(d.workingHours, 0, 120)
         && str(d.serviceArea, 0, 160)
         && d.extra is map && d.extra.size() <= 10
+        // Older pages may not have testimonials yet.
+        && (!('testimonials' in d) || (d.testimonials is list && d.testimonials.size() <= 6))
         && d.updatedAt is int;
     }
 
@@ -53,7 +55,7 @@ service cloud.firestore {
         && onlyChanges(['template', 'name', 'professionId', 'state', 'city', 'area', 'pincode',
                         'intro', 'about', 'photo', 'cover', 'yearsExperience', 'services',
                         'portfolio', 'videos', 'languages', 'contact', 'workingHours',
-                        'serviceArea', 'extra', 'updatedAt'])
+                        'serviceArea', 'extra', 'testimonials', 'updatedAt'])
         && validProfile(request.resource.data, uid);
     }
 

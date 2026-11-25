@@ -258,6 +258,13 @@ function Dashboard() {
         )}
 
         {S(
+          "sec-reviews",
+          t.dash.secReviews,
+          <ReviewsEditor draft={draft} set={set} errors={errors} />,
+          draft.testimonials.length ? fmt(t.dash.reviewsCount, { n: draft.testimonials.length }) : t.dash.secReviewsSub,
+        )}
+
+        {S(
           "sec-contact",
           t.dash.secContact,
           <div className="space-y-4">
@@ -387,6 +394,7 @@ function sectionForField(key: string): string | null {
   if (key === "about") return "sec-about";
   if (key.startsWith("services")) return "sec-services";
   if (key.startsWith("videos")) return "sec-work";
+  if (key.startsWith("testimonials")) return "sec-reviews";
   if (/^(phone|whatsapp|email|website|instagram)$/.test(key)) return "sec-contact";
   if (/^(yearsExperience|workingHours|serviceArea|extra)/.test(key)) return "sec-more";
   return null;
@@ -480,6 +488,71 @@ function ServicesEditor({ draft, set, errors, currency }: { draft: Draft; set: S
       {draft.services.length < LIMITS.services && (
         <button type="button" className="btn-secondary w-full" onClick={() => set("services", [...draft.services, { name: "", priceMin: "", priceMax: "" }])}>
           + {t.dash.addService}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ReviewsEditor({ draft, set, errors }: { draft: Draft; set: SetFn; errors: Record<string, string> }) {
+  const { t } = useT();
+  const update = (i: number, patch: Partial<Draft["testimonials"][number]>) =>
+    set("testimonials", draft.testimonials.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted">{t.dash.reviewsHint}</p>
+      {draft.testimonials.map((r, i) => {
+        const err = errors[`testimonials.${i}.name`] || errors[`testimonials.${i}.text`] || errors[`testimonials.${i}.detail`];
+        return (
+          <div key={i} className="rounded-xl border border-line p-3">
+            <div className="flex gap-2">
+              <input
+                id={`testimonials.${i}.name`}
+                className="input"
+                placeholder={t.dash.reviewName}
+                aria-label={t.dash.reviewName}
+                maxLength={LIMITS.testimonialName}
+                value={r.name}
+                onChange={(e) => update(i, { name: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => set("testimonials", draft.testimonials.filter((_, j) => j !== i))}
+                className="shrink-0 rounded-xl px-3 text-xl text-muted hover:text-red-600"
+                aria-label={t.dash.removeService}
+              >
+                ×
+              </button>
+            </div>
+            <textarea
+              id={`testimonials.${i}.text`}
+              className="input mt-2 min-h-20"
+              placeholder={t.dash.reviewText}
+              aria-label={t.dash.reviewText}
+              maxLength={LIMITS.testimonialText}
+              value={r.text}
+              onChange={(e) => update(i, { text: e.target.value })}
+            />
+            <input
+              id={`testimonials.${i}.detail`}
+              className="input mt-2"
+              placeholder={t.dash.reviewDetail}
+              aria-label={t.dash.reviewDetail}
+              maxLength={LIMITS.testimonialDetail}
+              value={r.detail}
+              onChange={(e) => update(i, { detail: e.target.value })}
+            />
+            {err && <p className="mt-1 text-sm text-red-600">{errorText(t, err)}</p>}
+          </div>
+        );
+      })}
+      {draft.testimonials.length < LIMITS.testimonials && (
+        <button
+          type="button"
+          className="btn-secondary w-full"
+          onClick={() => set("testimonials", [...draft.testimonials, { name: "", text: "", detail: "" }])}
+        >
+          + {t.dash.addReview}
         </button>
       )}
     </div>

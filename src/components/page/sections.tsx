@@ -9,6 +9,7 @@ import { SITE_HOST } from "@/lib/site";
 import {
   callHref,
   initials,
+  mapsHref,
   placeLine,
   priceText,
   whatsappHref,
@@ -16,7 +17,7 @@ import {
   youtubeId,
   type PageCtx,
 } from "./helpers";
-import { PhoneIcon, VerifiedIcon, WhatsAppIcon } from "./icons";
+import { PhoneIcon, PinIcon, VerifiedIcon, WhatsAppIcon } from "./icons";
 import { ShareButton } from "./ShareButton";
 
 export type Theme = {
@@ -31,6 +32,9 @@ export type Theme = {
   shareBtn: string;
   avatar: string;
   footer: string;
+  card: string; // background for small cards (reviews)
+  nav: string; // sticky section menu bar
+  navLink: string; // one link in that menu
 };
 
 const btnBase =
@@ -105,7 +109,7 @@ export function StickyContactBar({ ctx, theme, bar }: { ctx: PageCtx; theme: The
 
 export function Section({ title, theme, children, id }: { title: string; theme: Theme; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className={theme.section}>
+    <section id={id} className={`scroll-mt-16 ${theme.section}`}>
       <h2 className={theme.h2}>{title}</h2>
       {children}
     </section>
@@ -224,6 +228,14 @@ export function DetailsSection({ ctx, theme }: { ctx: PageCtx; theme: Theme }) {
           </div>
         ))}
       </dl>
+      <a
+        href={mapsHref(profile)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold underline ${theme.link}`}
+      >
+        <PinIcon size={14} /> {t.page.viewOnMap}
+      </a>
     </Section>
   );
 }
@@ -251,6 +263,79 @@ export function ContactSection({ ctx, theme }: { ctx: PageCtx; theme: Theme }) {
         ))}
       </ul>
     </Section>
+  );
+}
+
+/** Client testimonials, added by the professional from the dashboard. */
+export function ReviewsSection({ ctx, theme }: { ctx: PageCtx; theme: Theme }) {
+  const reviews = ctx.profile.testimonials ?? [];
+  if (!reviews.length) return null;
+  return (
+    <Section title={ctx.t.page.reviews} theme={theme} id="reviews">
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {reviews.map((r, i) => (
+          <li key={i} className={`rounded-xl p-4 ${theme.card}`}>
+            <p className="leading-relaxed">“{r.text}”</p>
+            <p className="mt-2 text-sm font-semibold">
+              — {r.name}
+              {r.detail && <span className={`font-normal ${theme.muted}`}>, {r.detail}</span>}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  );
+}
+
+export type SectionKey = "about" | "services" | "work" | "videos" | "reviews" | "details" | "contact";
+
+/** Which sections have content (so the menu never links to an empty section). */
+function hasSection(ctx: PageCtx, key: SectionKey): boolean {
+  const p = ctx.profile;
+  switch (key) {
+    case "about":
+      return !!p.about.trim();
+    case "services":
+      return p.services.length > 0;
+    case "work":
+      return p.portfolio.length > 0;
+    case "videos":
+      return p.videos.length > 0;
+    case "reviews":
+      return (p.testimonials ?? []).length > 0;
+    default:
+      return true;
+  }
+}
+
+/**
+ * Sticky menu under the header: tap a section name to jump to it — makes the page
+ * feel like a small website. Pass the sections in the order the template shows them.
+ */
+export function SectionNav({ ctx, theme, order }: { ctx: PageCtx; theme: Theme; order: SectionKey[] }) {
+  const labels: Record<SectionKey, string> = {
+    about: ctx.t.page.about,
+    services: ctx.t.page.navServices,
+    work: ctx.t.page.work,
+    videos: ctx.t.page.videos,
+    reviews: ctx.t.page.reviews,
+    details: ctx.t.page.details,
+    contact: ctx.t.page.contact,
+  };
+  const items = order.filter((k) => hasSection(ctx, k));
+  if (items.length < 3) return null; // not worth a menu yet
+  return (
+    <nav aria-label={ctx.t.page.navLabel} className={`sticky top-0 z-30 ${theme.nav}`}>
+      <ul className="mx-auto flex max-w-2xl gap-1 overflow-x-auto px-3 py-2 [scrollbar-width:none]">
+        {items.map((k) => (
+          <li key={k} className="shrink-0">
+            <a href={`#${k}`} className={`block whitespace-nowrap px-3 py-1.5 text-sm font-semibold ${theme.navLink}`}>
+              {labels[k]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
