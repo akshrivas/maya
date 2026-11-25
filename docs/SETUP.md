@@ -80,12 +80,11 @@ npx firebase deploy --only firestore:rules,storage --project YOUR-PROJECT-ID
 
 ---
 
-## Step 3 — GitHub access for Claude (so the code can be pushed)
+## Step 3 — Put the code on the `main` branch
 
-The code is committed but couldn't be pushed: the Claude GitHub app doesn't have access to `akshrivas/maya` yet.
-1. Open https://claude.ai/connect-github and connect/reconnect your GitHub account.
-2. Install the Claude GitHub App on the `akshrivas/maya` repository (https://github.com/apps/claude/installations/select_target).
-3. Tell me, and I'll push the branch.
+The code is on GitHub in the branch `claude/trusting-clarke-rgmeka`. Vercel publishes the `main` branch.
+Ask me to open a pull request, then click **Merge** on GitHub (or merge the branch yourself).
+From then on, every change merged into `main` goes live automatically.
 
 ---
 
