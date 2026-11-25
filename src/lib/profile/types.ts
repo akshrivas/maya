@@ -65,6 +65,7 @@ export type PrivateUser = {
   lang: string;
   consent: { termsVersion: string; acceptedAt: number };
   verification: Verification | null;
+  signupRef: string | null; // page link that brought them to Maya, if any
   createdAt: number;
 };
 

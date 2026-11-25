@@ -191,10 +191,20 @@ export function searchProfessions(query: string, lang: Lang): Profession[] {
     a.id === "other" ? 1 : b.id === "other" ? -1 : a.names[lang].localeCompare(b.names[lang]),
   );
   if (!q) return sorted;
-  return sorted.filter(
-    (p) =>
-      p.id === "other" ||
-      Object.values(p.names).some((n) => n.toLowerCase().includes(q)) ||
-      p.aliases?.some((a) => a.includes(q)),
-  );
+  // Best matches first: a name starting with the query, then a word starting with it,
+  // then anything containing it (including aliases like "vakil").
+  const score = (p: Profession) => {
+    if (p.id === "other") return 9;
+    const names = Object.values(p.names).map((n) => n.toLowerCase());
+    if (names.some((n) => n.startsWith(q))) return 0;
+    if (names.some((n) => n.split(/[\s/()]+/).some((w) => w.startsWith(q)))) return 1;
+    if (p.aliases?.some((a) => a.startsWith(q))) return 2;
+    if (names.some((n) => n.includes(q)) || p.aliases?.some((a) => a.includes(q))) return 3;
+    return -1;
+  };
+  return sorted
+    .map((p) => ({ p, s: score(p) }))
+    .filter((x) => x.s >= 0)
+    .sort((a, b) => a.s - b.s)
+    .map((x) => x.p);
 }

@@ -4,9 +4,11 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { getServerDict } from "@/i18n/server";
 import { fmt } from "@/i18n";
 import { SITE_HOST } from "@/lib/site";
+import { RefCapture } from "@/components/RefCapture";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ ref?: string; deleted?: string }> }) {
   const { t } = await getServerDict();
+  const { ref, deleted } = await searchParams;
   const points = [
     { icon: "⚡", title: t.home.point1Title, body: fmt(t.home.point1Body, { host: SITE_HOST }) },
     { icon: "📞", title: t.home.point2Title, body: t.home.point2Body },
@@ -17,7 +19,13 @@ export default async function HomePage() {
   return (
     <>
       <SiteHeader />
+      <RefCapture refHandle={ref} />
       <main>
+        {deleted === "1" && (
+          <p role="status" className="mx-auto mt-4 max-w-5xl rounded-xl bg-brand-50 px-4 py-3 text-sm">
+            {t.account.deleted}
+          </p>
+        )}
         <section className="mx-auto grid max-w-5xl gap-10 px-4 pb-14 pt-10 md:grid-cols-2 md:items-center md:pt-20">
           <div>
             <p className="mb-4 inline-block rounded-full bg-accent-400/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink">

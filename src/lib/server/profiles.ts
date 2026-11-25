@@ -1,5 +1,5 @@
 import "server-only";
-import { adminDb } from "@/lib/firebase/admin";
+import { adminAuth, adminBucket, adminDb } from "@/lib/firebase/admin";
 import { COUNTRIES } from "@/config/countries";
 import { professionCategory } from "@/config/professions";
 import { baseHandle, handleCandidates, isValidHandle } from "@/lib/profile/handle";
@@ -16,7 +16,7 @@ export class HandleTakenError extends Error {}
 export async function createProfile(
   uid: string,
   data: Step1Data,
-  signIn: { phone: string | null; email: string | null; lang: string },
+  signIn: { phone: string | null; email: string | null; lang: string; ref?: string | null },
 ): Promise<Profile> {
   const db = adminDb();
   const now = Date.now();
@@ -72,6 +72,7 @@ export async function createProfile(
       lang: signIn.lang,
       consent: { termsVersion: TERMS_VERSION, acceptedAt: now },
       verification: null,
+      signupRef: signIn.ref ?? null,
       createdAt: now,
     };
 
@@ -122,4 +123,37 @@ export async function listPublishedHandles(limit = 5000): Promise<{ handle: stri
     .limit(limit)
     .get();
   return snap.docs.map((d) => ({ handle: d.get("handle"), updatedAt: d.get("updatedAt") }));
+}
+
+/**
+ * "Delete my account and data": removes the public page, its link, private data,
+ * every uploaded photo and finally the login itself. Safe to run twice.
+ */
+export async function deleteAccount(uid: string): Promise<void> {
+  const db = adminDb();
+  const profileRef = db.collection("profiles").doc(uid);
+  const profile = await profileRef.get();
+  const batch = db.batch();
+  if (profile.exists) {
+    const handle = profile.get("handle") as string | undefined;
+    if (handle) {
+      const link = await db.collection("handles").doc(handle).get();
+      if (link.exists && link.get("uid") === uid) batch.delete(link.ref);
+    }
+    batch.delete(profileRef);
+  }
+  batch.delete(db.collection("users").doc(uid));
+  const usage = await db.collection("aiUsage").where("uid", "==", uid).get();
+  usage.docs.forEach((d) => batch.delete(d.ref));
+  await batch.commit();
+
+  await adminBucket().deleteFiles({ prefix: `users/${uid}/` }).catch((e) => {
+    console.error("deleteAccount: storage cleanup failed", e);
+  });
+
+  await adminAuth()
+    .deleteUser(uid)
+    .catch((e: { code?: string }) => {
+      if (e.code !== "auth/user-not-found") throw e;
+    });
 }

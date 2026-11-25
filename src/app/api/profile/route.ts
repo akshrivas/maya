@@ -20,6 +20,7 @@ export async function POST(req: Request) {
       phone: user.phone_number ?? null,
       email: user.email ?? null,
       lang: isLang(body?.lang) ? body.lang : "en",
+      ref: typeof body?.ref === "string" && /^[a-z0-9-]{3,40}$/.test(body.ref) ? body.ref : null,
     });
     return NextResponse.json({ handle: profile.handle });
   } catch (err) {

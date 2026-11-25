@@ -66,3 +66,10 @@ describe("translations", () => {
     expect(keys(hi).sort()).toEqual(keys(en).sort());
   });
 });
+
+describe("profession search ranking", () => {
+  it("puts names starting with the query first", () => {
+    expect(searchProfessions("tu", "en")[0].id).toBe("tutor");
+    expect(searchProfessions("elec", "en")[0].id).toBe("electrician");
+  });
+});

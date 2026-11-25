@@ -14,6 +14,7 @@ import { LinkedText } from "@/components/ui/LinkedText";
 import { ProfessionPicker } from "@/components/ui/ProfessionPicker";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Logo } from "@/components/Logo";
+import { readRef } from "@/components/RefCapture";
 
 type PinState = "idle" | "loading" | "found" | "notFound";
 
@@ -100,7 +101,7 @@ export default function OnboardingPage() {
     }
     setBusy(true);
     try {
-      const res = await authedFetch("/api/profile", { method: "POST", body: JSON.stringify({ ...payload, lang }) });
+      const res = await authedFetch("/api/profile", { method: "POST", body: JSON.stringify({ ...payload, lang, ref: readRef() }) });
       const json = await res.json();
       if (res.ok || json.error === "exists") {
         router.replace("/dashboard?welcome=1");
